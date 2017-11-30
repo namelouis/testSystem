@@ -1,0 +1,136 @@
+/* common */
+.bkgw{background-color: #ffffff;}
+body{
+    background: #f0f0f0;
+}
+.card-view {
+  width: 90%;
+  margin: 10px auto;
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
+  padding-left: 5%;
+  position: relative;
+  background-color: #fff;
+}
+.content-r{
+    width: 80%;
+    margin-left: 20%;
+}
+.pr{
+    position: relative;
+}
+
+
+
+.login-card{
+    height: 400px;
+    width: 29%;
+    box-shadow: 1px 1px 2px #999999;
+    border-radius: 4px;
+    position: absolute;
+    left: 35%;
+    right: 45%;
+    top: 50px;
+}
+.login-title{
+    font-size: 20px;
+}
+.login-title span{
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+    margin:30px 0 20px 0;
+}
+.login-input{
+    width: 70%;
+    margin: 0 auto;
+}
+.login-input input{
+    padding: 8px;
+    margin: 0 auto;
+    width: 90%;
+    font-size: 21px;
+}
+.login-btn{
+    width: 80%;
+
+    padding: 15px 0;
+    text-align: center;
+    background-color: #00a4ff;
+    color: #ffffff;
+    border-radius: 4px;
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 20px;
+}
+
+#nav{
+    height: 100%;
+    width: 20%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(40, 40, 52);
+    color: #ffffff;
+}
+.nav-icon{
+    height: 120px;
+
+}
+.index-item{
+    line-height: 40px;
+    padding-left: 5%;
+}
+.select-list{
+    width: 60%;
+    position: absolute;
+    left: 20%;
+    top: 0;
+    background-color: #e3e3e3; 
+    padding: 20px 0;
+}
+.select-item{
+    width: 30%;
+    margin: 1%;
+    padding: 40px 0;
+    float: left;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px #999999;
+}
+.select-item p{
+    width: 80%;
+    margin: 5px auto;
+
+}
+
+#index{
+    width: 100%;
+}
+
+.up-load-content{
+    padding: 5% 4% 0 4%;
+}
+.input-group{
+    margin:20px 0;
+}
+.test-item{
+    width: 42%;
+    margin: 3%;
+    float: left;
+    font-size: 17px;
+}
+
+.test-cont{
+    background: #fff;
+    margin: 5% auto;
+    padding: 0 2%;
+    width: 86%;
+}
+.test-title{
+    line-height: 50px;
+}
+.btn-group{
+    text-align: center;
+}
