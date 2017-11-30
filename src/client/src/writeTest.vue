@@ -1,7 +1,9 @@
 <template>
     <div id="writeTest">
         <v-header></v-header>
-        <div class="write-test-con content-r pr"></div>
+        <div class="write-test-con content-r pr">
+            123123123123
+        </div>
     </div>
 </template>
 <script>
