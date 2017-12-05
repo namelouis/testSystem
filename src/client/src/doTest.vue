@@ -4,7 +4,12 @@
             <el-collapse v-model="activeNames" @change="handleChange" v-loading="loading">
                 <el-collapse-item title="选择题" name="1">
                     <div class="chooseTest-con">
-            
+                        <div class="chooseTest-item" v-for="(item,index) in data[0].chooseTest">
+                            <p class="test-title">{{index+1}} .{{item.chooseTestQuestion}}</p>
+                            <div class="choose-option-con" v-for="(option,key) in item.chooseTestOption">
+                                <p class="option-title">{{option}}</p><el-radio v-model="userChooseTestAnswer[index]" :label="key+1">{{key+1}}</el-radio>
+                            </div>
+                        </div>
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="填空题" name="2">
@@ -35,7 +40,7 @@
             </el-collapse>
         </div>
         <div class="btn-group">
-            <el-button type="primary">提交</el-button>
+            <el-button type="primary" @click="upLoadAnswer">提交</el-button>
             <el-button type="danger">放弃</el-button>
         </div>
     </div>
@@ -73,6 +78,28 @@
         methods:{
             handleChange(){
 
+            },
+            upLoadAnswer(){
+                if(document.cookie.userId){
+                    console.log(document.cookie.userId)
+                }
+                var answerData = {
+                    userChooseTestAnswer:this.userChooseTestAnswer,
+                    userBlankTestAnswer:this.userBlankTestAnswer,
+                    userOxTestAnswer:this.userOxTestAnswer,
+                    userQaTestAnswer:this.userQaTestAnswer,
+                    for:this.data[0]._id
+                }
+                $.ajax({
+                    url:'http://localhost:3000/api/upLoadAnswer',
+                    type:'post',
+                    data: {
+                        data:JSON.stringify(answerData)
+                    },
+                    success:function(result){
+                        console.log(result)
+                    }
+                })
             }
         }
     }

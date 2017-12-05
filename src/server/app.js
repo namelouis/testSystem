@@ -5,9 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors')
+var session = require('express-session')
+var mongoStore = require('connect-mongo')(session)
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+
+var sessionConfig = require('./common/config')
 
 var app = express();
 
@@ -26,6 +30,21 @@ app.use(cors({
   origin:'*',
   methods:['GET','POST'],
   allowedHeaders:['Content-Type','Authorization']
+}))
+
+app.use(session({
+    secret: sessionConfig.cookieSecret,    //cookie签名
+    key:sessionConfig.dbName,
+    resave: true,
+    saveUninitialized: false,
+    store:new mongoStore({url:'mongodb://localhost:27017/session'}),
+    // store: new mongoStore({
+    //   db: sessionConfig.dbName
+    // }),
+    cookie:{
+      maxAge :1000 * 60 * 60 * 3,
+      secure: false
+    }
 }))
 
 app.use('/', index);

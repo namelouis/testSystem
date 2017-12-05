@@ -22,13 +22,14 @@
                 {title:'标题',content:'内容'},
                 {title:'标题',content:'内容'},
                 {title:'标题',content:'内容'},
-            ]
+                ],
             }
         },
-
-
         components:{
             'v-header':vheader
+        },
+        methods:{
+
         }
     }
 </script>

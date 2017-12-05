@@ -40,6 +40,13 @@
                 }else if(this.type =='2'){
                     return '注册'
                 }
+            },
+            registerPwd(){
+                if(this.registerPwd1==this.registerPwd2){
+                    return this.registerPwd1
+                }else{
+                    return false
+                }
             }
         },
         methods:{
@@ -57,10 +64,33 @@
                        },
                        type: 'post',
                        success: function (res) {
-                           console.log(res.data.msg)
+                           if(res.status=='0000'){
+                                alert(res.msg)
+                                self.$router.push('/index')
+                           }else if(res.status=='0002'){
+                                alert(res.msg)
+                                self.$router.push('/index')
+                           }else{
+                               alert(res.msg)
+                           }
                        }
                    })
                }else if(this.type=='2'){
+                if(self.registerPwd){
+                    $.ajax({
+                        url: 'http://localhost:3000/register',
+                        data: {
+                            registerId: self.registerId,
+                            registerPwd: self.registerPwd1
+                        },
+                        type: 'post',
+                        success: function (res) {
+                            console.log(res)
+                        }
+                    })
+                }else{
+                    alert('两次输入密码不一致')
+                }
 
                }
             }

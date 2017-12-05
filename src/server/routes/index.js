@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../database/db')
-
+var methods = require('../public/methods')
+var mongoose = require('mongoose')
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -13,13 +14,163 @@ router.post('/api',function(req,res,next){
   })
 })
 router.post('/login', function (req, res, next) {
-  console.log(req.body)
+  console.log(res.cookie.userId)
+  if(res.cookie.userId){
+    return  res.json({
+      status:'0002',
+      msg:'您已经登录,请勿重复登录'
+    })
+  }
+  // var sess = req.session
+  // var user = methods.findUser(req.body.loginId,req.body.loginPwd)
+  
+  // if(user){
+  //   req.session.regenerate(function(err){
+  //     if(err){
+  //       return res.json({status:9999,msg:'登录失败'})
+  //     }
 
-  res.json({
-    status: 0000,
-    data: { msg:'登陆成功' }
+  //     req.session.loginUser = user.name
+  //     res.json({status:0000,msg:'登录成功'})
+  //   })
+  // }else{
+  //   res.json({status:0001,msg:'账号或密码错误'})
+  // }
+  var user = db.users
+  var userId = req.body.loginId
+  var userPwd = req.body.loginPwd
+  user.find({id:userId,password:userPwd},function(err,doc){
+    if(err){
+      console.log(err)
+      res.json({
+        status:'9999',
+        msg:'异常错误'
+      })
+    }else if(doc.length==0){
+      res.json({
+        status:'0001',
+        msg:'账号或密码错误'
+      })
+    }else{
+      res.cookie('userId', userId, { expires: new Date(Date.now() + 1000 * 60 * 10), httpOnly: true,domain:false })
+
+      res.json({
+        status:'0000',
+        msg:'登录成功',
+        userId:userId
+      })
+    }
+
+    res.send()
   })
 })
+
+router.post('/register',function(req,res,next){
+  var user = db.users
+  var userId = req.body.registerId
+  var userPwd = req.body.registerPwd
+  user.find({id:userId},function(err,doc){
+    if(err){
+      console.log(err)
+      res.json({
+        status: '0001',
+        msg: '异常错误',
+      })
+
+    }else if(doc.length != 0){
+      console.log(doc)
+      res.json({
+        status:'0001',
+        msg:'用户名已存在',
+      })
+      
+    }else{
+      user.create({
+        id:userId,
+        password:userPwd
+      },function(err,doc){
+        if(err){
+          console.log(err)
+        }else{
+          res.json({
+            msg:'用户名创建成功',
+            status:'0000'
+          })
+        }
+      })
+    }
+  })
+})
+
+router.post('/logout',function(req,res,next){
+  res.clearCookie('userId')
+  res.redirect('/login?'+Date.now())
+})
+
+router.post('/api/getMyTest',function(req,res,next){
+  var ownerName = req.body.ownerName
+  var usersAnswer = db.usersAnswer
+  var testList = db.testList
+  var myTestList = new Array()
+  usersAnswer.find({ownerName:ownerName},function(err,doc){
+    if(err){
+      return res.json({
+        status:'9999',
+        msg:'系统异常'
+      })
+    }else{
+      for (let i= 0;i<doc.length;i++){
+        testList.find({ "_id": mongoose.mongo.ObjectId(doc[i].for)},function(error,document){
+          if(error){
+            console.log(error)
+          }else{
+            myTestList.push({
+              testQuestion: document[i],
+              testAnswer: doc[i]
+            })
+            return res.json({
+              status: '0000',
+              msg: '操作成功',
+              data: myTestList
+            })
+          }
+        })
+      }
+    }
+  })
+})
+
+router.post('/api/upLoadAnswer',function(req,res,next){
+  console.log(req.body)
+  var answer = JSON.parse(req.body.data)
+  console.log(answer.userBlankTestAnswer)
+  var userAnswer = new db.usersAnswer({
+    chooseTest: answer.userChooseTestAnswer,
+    blankTest: answer.userBlankTestAnswer,
+    oxTest: answer.userOxTestAnswer,
+    qaTest: answer.userQaTestAnswer,
+    ownerName: '后续添加',
+    answerDate: Date.now(),
+    for:answer.for
+  })
+
+  userAnswer.save(function(err,doc){
+    if(err){
+      return res.json({
+        status:'9999',
+        msg:'系统异常'
+      })
+    }else{
+      console.log(doc)
+      return res.json({
+        status:'0000',
+        msg:'提交成功'
+      })
+    }
+  })
+})
+
+
 router.post('/api/getTestList',function(req,res,next){
   var testList = db.testList
   testList.find({},{ownerName:1,testDate:1},function(err,result){

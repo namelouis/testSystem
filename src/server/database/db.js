@@ -52,6 +52,15 @@ var testList = mongoose.model('testList',{
     testDate:Array
 })
 
+var usersAnswer = mongoose.model('usersAnswer',{
+    chooseTest:Array,
+    blankTest: Array,
+    oxTest: Array,
+    qaTest: Array,
+    ownerName: String,
+    answerDate:Date,
+    for:String
+})
 
 
 exports.users = users
@@ -60,4 +69,4 @@ exports.blankTest = blankTest
 exports.oxTest = oxTest
 exports.qaTest = qaTest
 exports.testList = testList
-
+exports.usersAnswer = usersAnswer
