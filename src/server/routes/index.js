@@ -107,6 +107,31 @@ router.post('/logout',function(req,res,next){
   res.redirect('/login?'+Date.now())
 })
 
+router.post('/api/updateTest',function(req,res,next){
+  var testDetail = JSON.parse(req.body.data)
+  db.testList.update({ "_id": mongoose.mongo.ObjectId(testDetail.testId)},{
+    ownerName:testDetail.ownerName,
+    testDate:testDetail.testDate,
+    chooseTest:testDetail.chooseTest,
+    blankTest:testDetail.blankTest,
+    oxTest:testDetail.oxTest,
+    qaTest:testDetail.qaTest
+  },function(err,doc){
+    if(err){
+      return res.json({
+        status:'9999',
+        msg:'系统异常'
+      })
+    }else if(doc){
+      return res.json({
+        status:'0000',
+        msg:'修改成功'
+      })
+    }
+  })
+
+})
+
 router.post('/api/getMyTest',function(req,res,next){
   var ownerName = req.body.ownerName
   var usersAnswer = db.usersAnswer
@@ -119,23 +144,31 @@ router.post('/api/getMyTest',function(req,res,next){
         msg:'系统异常'
       })
     }else{
-      for (let i= 0;i<doc.length;i++){
-        testList.find({ "_id": mongoose.mongo.ObjectId(doc[i].for)},function(error,document){
-          if(error){
-            console.log(error)
-          }else{
-            myTestList.push({
-              testQuestion: document[i],
-              testAnswer: doc[i]
-            })
-            return res.json({
-              status: '0000',
-              msg: '操作成功',
-              data: myTestList
-            })
-          }
+      var promiseList = new Array()
+      for (let i = 0; i < doc.length; i++) {
+        var p = new Promise(function(resolve,reject){
+          testList.find({ "_id": mongoose.mongo.ObjectId(doc[i].for) }, function (error, document) {
+            if (error) {
+              console.log(error)
+            } else {
+              console.log(document)
+              myTestList.push({
+                testQuestion: document[0],
+                testAnswer: doc[i]
+              })
+              resolve()
+            }
+          })
         })
+        promiseList.push(p)
       }
+      Promise.all(promiseList).then(function(){
+        return res.json({
+          status: '0000',
+          msg: '操作成功',
+          data: myTestList
+        })
+      })
     }
   })
 })

@@ -6,6 +6,7 @@ const upLoadTest = resolve => require(['../upLoadTest.vue'], resolve)
 const selectTest = resolve => require(['../selectTest.vue'],resolve)
 const doTest = resolve => require(['../doTest.vue'],resolve)
 const myTest = resolve => require(['../myTest.vue'], resolve)
+const updateTest = resolve =>require(['../updateTest.vue'],resolve)
 
 // import login from '../login.vue'
 Vue.use(Router)
@@ -56,6 +57,14 @@ export default new Router({
       path: '/myTest',
       name: 'myTest',
       component: myTest,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/updateTest',
+      name: 'updateTest',
+      component: updateTest,
       meta: {
         keepAlive: true
       }

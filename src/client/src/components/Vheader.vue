@@ -3,8 +3,8 @@
         <div class="nav-icon">
             <img src="" alt="">
         </div>
-        <div class="index-item">首页</div>
-        <div class="index-item">首页</div>
+        <div class="index-item" @click="toIndex">首页</div>
+        <div class="index-item" @click="back">返回</div>
         <div class="index-item">首页</div>
         <div class="index-item">首页</div>
         <div class="index-item">首页</div>
@@ -19,6 +19,13 @@
 </template>
 <script>
     export default{
-        
+        methods:{
+            back(){
+                this.$router.go(-1)
+            },
+            toIndex(){
+                this.$router.push('/index')
+            }
+        }
     }
 </script>

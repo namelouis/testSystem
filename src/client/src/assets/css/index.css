@@ -134,3 +134,11 @@ body{
 .btn-group{
     text-align: center;
 }
+.el-card:hover{
+    transform: translate3d(0px,-1px,4px);
+    box-shadow:0 2px 12px 0 rgba(0, 0, 0, .4)
+}
+.info-group{
+    width: 90%;
+    margin: 10px auto;
+}

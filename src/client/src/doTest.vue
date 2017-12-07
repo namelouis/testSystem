@@ -80,6 +80,7 @@
 
             },
             upLoadAnswer(){
+                var self = this
                 if(document.cookie.userId){
                     console.log(document.cookie.userId)
                 }
@@ -97,7 +98,8 @@
                         data:JSON.stringify(answerData)
                     },
                     success:function(result){
-                        console.log(result)
+                        alert(result.msg)
+                        self.$router.push('/myTest')
                     }
                 })
             }
