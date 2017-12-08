@@ -62,6 +62,23 @@ var usersAnswer = mongoose.model('usersAnswer',{
     for:String
 })
 
+var grade = mongoose.model('grade',{
+    for: ObjectID,
+    chooseTest:Array,
+    blankTest:Array,
+    oxTest:Array,
+    qaTest:Array,
+    answerDate:Array,
+    totalGrade:String,
+})
+// usersAnswer.aggregate([{
+//     $lookup: {
+//         from: 'testLists',
+//         localField: 'for',
+//         foreignField: '_id',
+//         as: 'inventoryDoc'
+//     }
+// }])
 
 exports.users = users
 exports.chooseTest = chooseTest

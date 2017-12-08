@@ -3,7 +3,7 @@
         <v-header></v-header>
         <div class="judgeList content-r">
             <ul>
-                <li class="test-item" v-for="(item,index) in testList" :testId="item._id">
+                <li class="test-item" v-for="(item,index) in testList" :testId="item._id" @click="toJudgeTest(item._id)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
                             <span>试卷{{index+1}}</span>
@@ -15,6 +15,9 @@
                             <div class="margin-y-10">
                                 做题人: {{item.ownerName}}
                             </div>
+                        </div>
+                        <div class="margin-y-10">
+
                         </div>
                     </el-card>
                 </li>
@@ -47,6 +50,11 @@
                     self.testList = result.data
                 }
             })
+        },
+        methods:{
+            toJudgeTest(id){
+                this.$router.push('/judgeTest?testId='+id)
+            }
         }
     }
 </script>

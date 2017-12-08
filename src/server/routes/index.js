@@ -136,7 +136,7 @@ router.post('/api/getJudgeList',function(req,res,next){
   var testId = req.body.testId
   var testList = new Array()
   var usersAnswer = db.usersAnswer
-  usersAnswer.find({'for':testId},{ownerName:1,answerDate:1,qaTest:1},function(err,doc){
+  usersAnswer.find({'for':testId},{ownerName:1,answerDate:1,qaTest:1,_id:1},function(err,doc){
     if(err){
       return res.json({
         status:'9999',
@@ -150,6 +150,11 @@ router.post('/api/getJudgeList',function(req,res,next){
       })
     }
   })
+})
+router.post('/api/getjudgeDetail',function(res,req,next){
+  var testId = req.body.testId
+  var usersAnswer = db.usersAnswer
+
 })
 
 router.post('/api/getMyTest',function(req,res,next){
