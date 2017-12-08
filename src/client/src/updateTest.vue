@@ -2,7 +2,7 @@
     <div id="upLoadTest">
         <v-header></v-header>
         <div class="content-r pr">
-            <ul class="testList" v-show="!detailIsShow">
+            <!-- <ul class="testList" v-show="!detailIsShow">
                 <li class="test-item" v-for="(item,index) in myTestList"  @click="showTestDetail(item._id)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
@@ -18,7 +18,7 @@
                         </div>
                     </el-card>
                 </li>
-            </ul>
+            </ul> -->
             <div class="test-cont" v-if="detailIsShow">
                 <el-collapse v-model="activeNames" >
                     <el-collapse-item title="选择题" name="1">
@@ -103,7 +103,7 @@
                 testDate: '',
                 myTestList: [],
                 testDetail: {},
-                detailIsShow:false,
+                detailIsShow:true,
                 activeNames: ['1'],
                 
             }
@@ -113,16 +113,17 @@
         },
         mounted(){
             var self = this
-            $.ajax({
-                url:"http://localhost:3000/api/getTestList",
-                type:'post',
-                data:{
-                    userId:'测试'
-                },
-                success(result){
-                    self.myTestList = result.data
-                }
-            })
+            // $.ajax({
+            //     url:"http://localhost:3000/api/getTestList",
+            //     type:'post',
+            //     data:{
+            //         userId:'测试'
+            //     },
+            //     success(result){
+            //         self.myTestList = result.data
+            //     }
+            // })
+            this.showTestDetail(this.$route.query.testId)
         },
         methods: {
             generateTest() {
@@ -170,7 +171,7 @@
                 this.qaTestAnswer = []
             },
             showTestDetail(id){
-                this.detailIsShow = true
+                // this.detailIsShow = true
                 var self = this
                 $.ajax({
                     url: 'http://localhost:3000/api/getTestDetail',
@@ -191,7 +192,7 @@
                 })
             },
             goBack(){
-                this.detailIsShow = false
+                this.$router.go(-1)
             }
         }
     }

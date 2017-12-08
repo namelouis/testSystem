@@ -1,7 +1,7 @@
 <template>
     <div id="doTest">
         <div class="test-cont">
-            <el-collapse v-model="activeNames" @change="handleChange" v-loading="loading">
+            <el-collapse v-model="activeNames" v-loading="loading">
                 <el-collapse-item title="选择题" name="1">
                     <div class="chooseTest-con">
                         <div class="chooseTest-item" v-for="(item,index) in data[0].chooseTest">
@@ -41,7 +41,7 @@
         </div>
         <div class="btn-group">
             <el-button type="primary" @click="upLoadAnswer">提交</el-button>
-            <el-button type="danger">放弃</el-button>
+            <el-button type="danger" @click="goBack">放弃</el-button>
         </div>
     </div>
 </template>
@@ -76,8 +76,8 @@
             })
         },
         methods:{
-            handleChange(){
-
+            goBack(){
+                this.$router.go(-1)
             },
             upLoadAnswer(){
                 var self = this
