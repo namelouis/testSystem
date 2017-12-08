@@ -132,6 +132,26 @@ router.post('/api/updateTest',function(req,res,next){
 
 })
 
+router.post('/api/getJudgeList',function(req,res,next){
+  var testId = req.body.testId
+  var testList = new Array()
+  var usersAnswer = db.usersAnswer
+  usersAnswer.find({'for':testId},{ownerName:1,answerDate:1,qaTest:1},function(err,doc){
+    if(err){
+      return res.json({
+        status:'9999',
+        msg:'系统异常'
+      })
+    }else if(doc){
+      return res.json({
+        status:'0000',
+        msg:'操作成功',
+        data:doc
+      })
+    }
+  })
+})
+
 router.post('/api/getMyTest',function(req,res,next){
   var ownerName = req.body.ownerName
   var usersAnswer = db.usersAnswer

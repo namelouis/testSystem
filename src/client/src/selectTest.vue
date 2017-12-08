@@ -18,6 +18,7 @@
                     <div class="menu-group">
                         <el-button type="primary" @click="toDoTest(item._id)">测试</el-button>
                         <el-button type="info" @click=toUpdateTest(item._id)>修改</el-button>
+                        <el-button type="info" @click=tojudgeTestList(item._id)>批改</el-button>
                         <el-button type="danger">删除</el-button>
                     </div>
                 </el-card>
@@ -51,6 +52,9 @@
             },
             toUpdateTest(id){
                 this.$router.push('/updateTest?testId='+id)
+            },
+            tojudgeTestList(id){
+                this.$router.push('/judgeTestList?testId='+id)
             }
         }
     }
