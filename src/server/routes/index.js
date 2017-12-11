@@ -136,7 +136,7 @@ router.post('/api/getJudgeList',function(req,res,next){
   var testId = req.body.testId
   var testList = new Array()
   var usersAnswer = db.usersAnswer
-  usersAnswer.find({'for':testId},{ownerName:1,answerDate:1,qaTest:1,_id:1},function(err,doc){
+  usersAnswer.find({'for':testId},{ownerName:1,answerDate:1,isJudge:1,_id:1},function(err,doc){
     if(err){
       return res.json({
         status:'9999',
@@ -151,10 +151,142 @@ router.post('/api/getJudgeList',function(req,res,next){
     }
   })
 })
-router.post('/api/getjudgeDetail',function(res,req,next){
+router.post('/api/judgeTest',function(req,res,next){
+  var judgeData = JSON.parse(req.body.data)
+  var grades = db.grade
+  var usersAnswer = db.usersAnswer
+  // grades.find({ 'for': mongoose.mongo.ObjectId(judgeData.answerId)},{isJudge:1},function(e,d){
+  //   if(e){
+  //     return res.json({
+  //       status: '9999',
+  //       msg: '系统错误'
+  //     })
+  //   }else{
+  //     if(d.length>0 && d[0].isJudge){
+  //       return res.json({
+  //         status:'0001',
+  //         msg:''
+  //       })
+  //     }
+  //   }
+  // })
+  grades.update({'for':mongoose.mongo.ObjectId(judgeData.answerId)},{
+    qaTest:judgeData.qaTest,
+    isJudge:true
+  },function(err,doc){
+    if(err){
+      return res.json({
+        status:'9999',
+        msg:'系统错误'
+      })
+    }else{
+      usersAnswer.update({'_id':mongoose.mongo.ObjectId(judgeData.answerId)},{isJudge:true},function(error,doc){
+        if(doc){
+          return res.json({
+            status: '0000',
+            msg: '操作成功'
+          })
+        }
+      })
+    }
+  })
+})
+
+router.post('/api/getjudgeDetail',function(req,res,next){
   var testId = req.body.testId
   var usersAnswer = db.usersAnswer
+  var testList = db.testList
+  var grades = db.grade
+  usersAnswer.find({ '_id': mongoose.mongo.ObjectId(testId) }, function (err, doc) {
+    if(err){
+      return res.json({
+        status: '9999',
+        msg: '系统异常'
+      })
+    }else if(doc){
+      testList.find({ '_id': mongoose.mongo.ObjectId(doc[0].for)},function(error,document){
+        if(error){
+          return res.json({
+            status: '9999',
+            msg: '系统异常'
+          })
+        }else if(document){
+          var getData = document
+          for (let i = 0; i < getData.length;i++){
+            getData[i].answerId = doc[i]._id
+            if(getData[i].chooseTest.length>0){
+              for (let j = 0; j < getData[i].chooseTest.length; j++) {
+                getData[i].chooseTest[j].studentAnswer = doc[i].chooseTest[j]
+                if (doc[i].chooseTest[j] ==getData[i].chooseTest[j].chooseTestAnswer){
+                  getData[i].chooseTest[j].isTrue = '1'
+                }else{
+                  getData[i].chooseTest[j].isTrue = '0'
+                }
 
+              }
+            }
+            if(getData[i].blankTest.length>0){
+              for (let j = 0; j < getData[i].blankTest.length; j++) {
+                getData[i].blankTest[j].studentAnswer = doc[i].blankTest[j]
+                if (doc[i].blankTest[j] == getData[i].blankTest[j].blankTestAnswer) {
+                  getData[i].blankTest[j].isTrue = '1'
+                } else {
+                  getData[i].blankTest[j].isTrue = '0'
+                }
+              }
+            }
+            if(getData[i].oxTest.length>0){
+              for (let j = 0; j < getData[i].oxTest.length; j++) {
+                getData[i].oxTest[j].studentAnswer = doc[i].oxTest[j]
+                if (doc[i].oxTest[j] == getData[i].oxTest[j].oxTestAnswer) {
+                  getData[i].oxTest[j].isTrue = '1'
+                } else {
+                  getData[i].oxTest[j].isTrue = '0'
+                }
+              }
+            }
+            if(getData[i].qaTest.length>0){
+              for (let j = 0; j < getData[i].qaTest.length; j++) {
+                getData[i].qaTest[j].studentAnswer = doc[i].qaTest[j]
+              }
+            }
+
+            grades.find({'for':doc[i]._id},function(e,d){
+              if(e){
+                return res.json({
+                  status: '9999',
+                  msg: '系统异常'
+                })
+              }else if(d.length>0){
+                return res.json({
+                  status: '0001',
+                  msg: '已存在',
+                  data: getData
+                })
+              }else{
+                var grade = new db.grade({
+                  for: doc[i]._id,
+                  chooseTest: getData[i].chooseTest,
+                  blankTest: getData[i].blankTest,
+                  oxTest: getData[i].oxTest,
+                  qaTest: getData[i].qaTest,
+                  answerDate: doc[i].answerDate,
+                  isJudge:false
+                })
+                grade.save()
+
+                return res.json({
+                  status: '0000',
+                  msg: '操作成功',
+                  data: getData
+                })
+              }
+            })
+          }
+        }
+      })
+    }
+  })
 })
 
 router.post('/api/getMyTest',function(req,res,next){

@@ -49,7 +49,8 @@ var testList = mongoose.model('testList',{
     oxTest:Array,
     qaTest:Array,
     ownerName:String,
-    testDate:Array
+    testDate:Array,
+    answerId:String
 })
 
 var usersAnswer = mongoose.model('usersAnswer',{
@@ -59,17 +60,20 @@ var usersAnswer = mongoose.model('usersAnswer',{
     qaTest: Array,
     ownerName: String,
     answerDate:Date,
-    for:String
+    for:String,
+    isJudge: { type: Boolean,default:false},
 })
 
 var grade = mongoose.model('grade',{
-    for: ObjectID,
+    for: String,
+    userId:String,
     chooseTest:Array,
     blankTest:Array,
     oxTest:Array,
     qaTest:Array,
     answerDate:Array,
     totalGrade:String,
+    isJudge:Boolean,
 })
 // usersAnswer.aggregate([{
 //     $lookup: {
@@ -87,3 +91,4 @@ exports.oxTest = oxTest
 exports.qaTest = qaTest
 exports.testList = testList
 exports.usersAnswer = usersAnswer
+exports.grade = grade
