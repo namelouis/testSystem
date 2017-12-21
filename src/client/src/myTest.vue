@@ -68,7 +68,10 @@
                         </el-collapse-item>
                     </el-collapse>
                 </div>
-                <el-button type="info" @click="toggleDetailIsShow">返回</el-button><el-button type="primary" @click="toUpdateTest">修改</el-button>
+                <div class="btn-group">
+                    <el-button type="info" @click="toggleDetailIsShow">返回</el-button>
+                </div>
+                <!-- <el-button type="primary" @click="toUpdateTest">修改</el-button> -->
             </el-card>
         </div>
     </div>
@@ -146,8 +149,6 @@
 
                     // self.myTestList = testList
                     self.testDetail = self.myTestList[0]
-                    console.log(self.myTestList)
-                    console.log(self.testDetail)
                 }
 
             })

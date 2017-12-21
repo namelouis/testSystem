@@ -92,8 +92,8 @@
         },
         methods:{
             generateTest(){
-                if(this.inputNum > 10){
-                    alert('请输入小于10的数字')
+                if(this.inputNum == ''){
+                    this.open4('请输入生成题目的数量')
                 }else{
                     this.uploadContentIsShow = true
                     this.upLoadTestNum = parseInt(this.inputNum)
@@ -141,26 +141,34 @@
 
                 var requestData = {
                     ownerName:this.ownerName,
-                    testDate:[this.testDate[0].substring(0,9), this.testDate[1].substring(0, 9)],
+                    testDate:[this.formatDate(this.testDate[0]),this.formatDate(this.testDate[1])],
                     chooseTest: chooseTest,
                     blankTest: blankTest,
                     oxTest: oxTest,
                     qaTest: qaTest,
                 }
-                
-                $.ajax({
-                    url:'http://localhost:3000/api/uploadTest',
-                    type:'post',
-                    // contentType: 'text/plain',
-                    // dataType: "json",
-                    data:{
-                        data:JSON.stringify(requestData),
-                    },
-                    success:function (res) {
-                        alert('添加成功')
-                        self.clear()
-                    }
-                })
+                if(this.ownerName==''){
+                    this.open4('请填写出卷人')
+                }else if(requestData.testDate.length!=2){
+                    this.open4('请选择测试的日期')
+                }else if(requestData.chooseTest.length!=0|| requestData.blankTest.length != 0|| requestData.oxTest.length != 0|| requestData.qaTest.length != 0){
+                    this.open4('请至少编写一道题目')
+                }else{
+                    $.ajax({
+                        url: 'http://localhost:3000/api/uploadTest',
+                        type: 'post',
+                        // contentType: 'text/plain',
+                        // dataType: "json",
+                        data: {
+                            data: JSON.stringify(requestData),
+                        },
+                        success: function (res) {
+                            self.open3('添加成功')
+                            self.clear()
+                        }
+                    })
+                }
+            
             },
             clear(){
                 this.chooseTestQuestion = []
@@ -172,6 +180,27 @@
                 this.oxTestAnswer = []
                 this.qaTestQuestion = []
                 this.qaTestAnswer = []
+            },
+            formatDate(date){
+                var year = date.getFullYear()
+                var month = date.getMonth()+1
+                var day = date.getDate()
+
+                return year+'-'+month+'-'+day
+            },
+            open3(msg) {
+                this.$notify({
+                    title: '成功',
+                    message: msg,
+                    type: 'success'
+                })
+            },
+            open4(msg){
+                this.$notify({
+                    title: '警告',
+                    message: msg,
+                    type: 'warning'
+                });
             }
         }
     }

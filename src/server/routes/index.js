@@ -14,8 +14,7 @@ router.post('/api',function(req,res,next){
   })
 })
 router.post('/login', function (req, res, next) {
-  console.log(res.cookie.userId)
-  if(res.cookie.userId){
+  if(req.cookies.userId){
     return  res.json({
       status:'0002',
       msg:'您已经登录,请勿重复登录'
@@ -52,7 +51,7 @@ router.post('/login', function (req, res, next) {
         msg:'账号或密码错误'
       })
     }else{
-      res.cookie('userId', userId, { expires: new Date(Date.now() + 1000 * 60 * 10), httpOnly: true,domain:false })
+      res.cookie('userId', userId, { maxAge:  1000 * 60})
 
       res.json({
         status:'0000',
@@ -103,8 +102,10 @@ router.post('/register',function(req,res,next){
 })
 
 router.post('/logout',function(req,res,next){
-  res.clearCookie('userId')
-  res.redirect('/login?'+Date.now())
+  res.cookie('userId','null',{maxAge:0})
+  return res.json({
+    msg:'清除成功'
+  })
 })
 
 router.post('/api/updateTest',function(req,res,next){
@@ -290,7 +291,13 @@ router.post('/api/getjudgeDetail',function(req,res,next){
 })
 
 router.post('/api/getMyTest',function(req,res,next){
-  var ownerName = req.body.ownerName
+  if(!req.cookies.userId){
+    return res.json({
+      status:'1111',
+      msg:'未登录'
+    })
+  }
+  var ownerName = req.cookies.userId
   var usersAnswer = db.usersAnswer
   var testList = db.testList
   var myTestList = new Array()
@@ -308,7 +315,7 @@ router.post('/api/getMyTest',function(req,res,next){
             if (error) {
               console.log(error)
             } else {
-              console.log(document)
+              // console.log(document)
               myTestList.push({
                 testQuestion: document[0],
                 testAnswer: doc[i]
@@ -331,15 +338,14 @@ router.post('/api/getMyTest',function(req,res,next){
 })
 
 router.post('/api/upLoadAnswer',function(req,res,next){
-  console.log(req.body)
+  var userId = req.cookies.userId
   var answer = JSON.parse(req.body.data)
-  console.log(answer.userBlankTestAnswer)
   var userAnswer = new db.usersAnswer({
     chooseTest: answer.userChooseTestAnswer,
     blankTest: answer.userBlankTestAnswer,
     oxTest: answer.userOxTestAnswer,
     qaTest: answer.userQaTestAnswer,
-    ownerName: '后续添加',
+    ownerName: userId,
     answerDate: Date.now(),
     for:answer.for
   })
@@ -394,6 +400,7 @@ router.post('/api/getTestDetail', function (req, res, next) {
 })
 router.post('/api/uploadTest',function(req,res,next){
   var users = db.users
+  var userId = req.cookies.userId
   var testData = JSON.parse(req.body.data)
   var chooseTest = new Array()
   var blankTest = new Array()
@@ -461,7 +468,7 @@ router.post('/api/uploadTest',function(req,res,next){
     blankTest:blankTest,
     oxTest:oxTest,
     qaTest:qaTest,
-    ownerName:testData.ownerName,
+    ownerName: userId,
     testDate:testData.testDate
   })
   testItem.save()

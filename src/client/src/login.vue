@@ -2,20 +2,32 @@
     <div>
         <div class="login-icon"></div>
         <div class="login-card bkgw">
-            <div class="login-title">
-                <span @click="changeType(1)" :class="{active:type=='1'}">登录</span>·<span @click="changeType(2)" :class="{active:type=='2'}">注册</span>
+            <div v-if="!isLogin">
+                <div class="login-title">
+                    <span @click="changeType(1)" :class="{active:type=='1'}">登录</span>·
+                    <span @click="changeType(2)" :class="{active:type=='2'}">注册</span>
+                </div>
+                <div class="login-input" v-show="type=='1'">
+                    <input type="text" placeholder="请输入账号" v-model="loginId">
+                    <input type="password" placeholder="请输入密码" v-model="loginPwd">
+                </div>
+                <div class="login-input" v-show="type=='2'">
+                    <input type="text" placeholder="请输入账号" v-model="registerId">
+                    <input type="password" placeholder="请输入密码" v-model="registerPwd1">
+                    <input type="password" placeholder="请再次输入密码" v-model="registerPwd2">
+                </div>
+                <div class="login-btn" @click="login">
+                    {{btnMessage}}
+                </div>
             </div>
-            <div class="login-input" v-show="type=='1'">
-                <input type="text" placeholder="请输入账号" v-model="loginId">
-                <input type="text" placeholder="请输入密码" v-model="loginPwd">
-            </div>
-            <div class="login-input" v-show="type=='2'">
-                <input type="text" placeholder="请输入账号" v-model="registerId">
-                <input type="text" placeholder="请输入密码" v-model="registerPwd1">
-                <input type="text" placeholder="请再次输入密码" v-model="registerPwd2">
-            </div>
-            <div class="login-btn" @click="login">
-                {{btnMessage}}
+            <div v-else>
+                <div >
+                    <p style="line-height:80px;font-size:40px;padding-left:40px;margin-top:50px;">欢迎,</p>
+                    <p style="text-align:center;font-size:24px;line-height:48px">{{userId}}</p>
+                </div>
+                <div class="logout-btn" @click="logout">
+                        登出
+                </div>
             </div>
         </div>
     </div>
@@ -30,7 +42,9 @@
                 registerPwd1:'',
                 registerPwd2:'',
                 loginId:'',
-                loginPwd:''
+                loginPwd:'',
+                userId:'',
+                isLogin:false,
             }
         },
         computed:{
@@ -49,6 +63,18 @@
                 }
             }
         },
+        created(){
+            if(document.cookie.indexOf('userId')>-1){
+                this.isLogin = true
+                var cookieArr = document.cookie.split(';')
+                for (var i = 0;i<cookieArr.length;i++){
+                    var arr = cookieArr[i].split('=')
+                    if(arr[0].indexOf('userId')>-1){
+                        this.userId = arr[1]
+                    }
+                }
+            }
+        },
         methods:{
             changeType(type){
                 this.type = type
@@ -63,6 +89,10 @@
                            loginPwd:self.loginPwd
                        },
                        type: 'post',
+                       xhrFields: {
+                         withCredentials: true
+                        },
+                        crossDomain: true,
                        success: function (res) {
                            if(res.status=='0000'){
                                 alert(res.msg)
@@ -93,6 +123,15 @@
                 }
 
                }
+            },
+            logout(){
+                $.ajax({
+                    url:'http://localhost:3000/logout',
+                    type:'post',
+                    success:function(){
+
+                    }
+                })
             }
         }
     }

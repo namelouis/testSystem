@@ -26,26 +26,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors({
-  origin:'*',
-  methods:['GET','POST'],
-  allowedHeaders:['Content-Type','Authorization']
-}))
+var allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:7880');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+};
+app.use(allowCrossDomain)  //跨域请求
 
-app.use(session({
-    secret: sessionConfig.cookieSecret,    //cookie签名
-    key:sessionConfig.dbName,
-    resave: true,
-    saveUninitialized: false,
-    store:new mongoStore({url:'mongodb://localhost:27017/session'}),
-    // store: new mongoStore({
-    //   db: sessionConfig.dbName
-    // }),
-    cookie:{
-      maxAge :1000 * 60 * 60 * 3,
-      secure: false
-    }
-}))
+// app.use(cors({
+//   origin:'*',
+//   methods:['GET','POST'],
+//   allowedHeaders:['Content-Type','Authorization'],
+// }))
+
+// app.use(session({
+//     secret: sessionConfig.cookieSecret,    //cookie签名
+//     key:sessionConfig.dbName,
+//     resave: true,
+//     saveUninitialized: false,
+//     store:new mongoStore({url:'mongodb://localhost:27017/session'}),
+//     // store: new mongoStore({
+//     //   db: sessionConfig.dbName
+//     // }),
+//     cookie:{
+//       maxAge :1000 * 60 * 60 * 3,
+//       secure: false
+//     }
+// }))
 
 app.use('/', index);
 app.use('/users', users);

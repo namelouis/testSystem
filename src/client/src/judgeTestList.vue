@@ -5,8 +5,9 @@
             <ul>
                 <li class="test-item" v-for="(item,index) in testList" :testId="item._id" @click="toJudgeTest(item._id)">
                     <el-card class="box-card">
-                        <div slot="header" class="clearfix">
+                        <div slot="header" class="clearfix" style="height:32px">
                             <span>试卷{{index+1}}</span>
+                            <el-tag type="danger" style="float:right;" v-if="item.isJudge">已评分</el-tag>
                         </div>
                         <div class="margin-y-10">
                             <div class="margin-y-10">
