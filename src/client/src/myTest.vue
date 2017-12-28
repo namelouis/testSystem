@@ -6,7 +6,9 @@
                 <li class="test-item" v-for="(item,index) in myTestList"  @click="showTestDetail(index)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                            <span>试卷{{index+1}}</span>                        
+                            <span>试卷{{index+1}}</span>     
+                            <el-tag type="success" class="fr" v-if="item.isJudge">已批改</el-tag>
+                            <el-tag type="danger" class="fr" v-else>未批改</el-tag>
                         </div>
                         <div  class="">
                             <div>
@@ -91,11 +93,19 @@
         },
         mounted(){
             var self = this
+            var userId 
+            var cookieArr = document.cookie.split(';')
+            for (var i = 0; i < cookieArr.length; i++) {
+                var arr = cookieArr[i].split('=')
+                if (arr[0].indexOf('userId') > -1) {
+                    userId = arr[1]
+                }
+            }
             $.ajax({
                 url:"http://localhost:3000/api/getMyTest",
                 type:'post',
                 data:{
-                    ownerName:'后续添加'
+                    userId: userId
                 },
                 success:function(res){
                     var testList = new Array()
@@ -143,6 +153,7 @@
                             blankTest:blankTest,
                             oxTest:oxTest,
                             qaTest:qaTest,
+                            isJudge:res.data[i].testAnswer.isJudge
                         }
                         self.myTestList.push(object)
                     }

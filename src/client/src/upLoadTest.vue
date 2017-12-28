@@ -12,7 +12,7 @@
 
             </div>
             <div class="upload-test-content" v-if = "uploadContentIsShow">
-                <div class="choose-group input-group" v-if="testType=='1'" v-for="(n,index) in upLoadTestNum">
+                <div class="choose-group input-group" v-show="testType=='1'" v-for="(n,index) in upLoadTestNum[0]">
                     <span>{{index+1}}.</span>
                     <el-input  placeholder="请输入题目题干"  style = "width:60%;" v-model="chooseTestQuestion[index]"></el-input>
                     <div>
@@ -22,16 +22,16 @@
                         <el-input  placeholder="请输入题目答案"  style = "width:50%;" v-model="chooseTestAnswer[index]"></el-input>
                     </div>
                 </div>
-                <div class="blank-group input-group" v-if="testType=='2'" v-for="(n,index) in upLoadTestNum">
+                <div class="blank-group input-group" v-show="testType=='2'" v-for="(n,index) in upLoadTestNum[1]">
                     <el-input  placeholder="请输入题目题干"  style = "width:50%;" v-model="blankTestQuestion[index]"></el-input>                    
                     <el-input  placeholder="请输入题目答案"  style = "width:50%;" v-model="blankTestAnswer[index]"></el-input>
                 </div>
-                <div class="ox-group input-group" v-if ="testType=='3'" v-for="(n,index) in upLoadTestNum">
+                <div class="ox-group input-group" v-show ="testType=='3'" v-for="(n,index) in upLoadTestNum[2]">
                     <el-input  placeholder="请输入题目题干"  style = "width:50%;" v-model="oxTestQuestion[index]"></el-input>                    
                     <el-radio v-model="oxTestAnswer[index]" label="1">正确</el-radio>
                     <el-radio v-model="oxTestAnswer[index]" label="0">错误</el-radio>
                 </div>
-                <div class="qa-group input-group" v-if ="testType=='4'" v-for="(n,index) in upLoadTestNum">
+                <div class="qa-group input-group" v-show ="testType=='4'" v-for="(n,index) in upLoadTestNum[3]">
                     <el-input  placeholder="请输入题目题干"  style = "width:50%;" v-model="qaTestQuestion[index]"></el-input>                    
                     <el-input  placeholder="请输入题目答案"  style = "width:50%;" v-model="qaTestAnswer[index]"></el-input>
                 </div>
@@ -72,7 +72,7 @@
                 },],
                 testType: '',
                 inputNum:'',
-                upLoadTestNum:0,
+                upLoadTestNum:[0,0,0,0],
                 uploadContentIsShow:false,
                 chooseTestQuestion:[],
                 chooseTestOption:[],
@@ -96,14 +96,24 @@
                     this.open4('请输入生成题目的数量')
                 }else{
                     this.uploadContentIsShow = true
-                    this.upLoadTestNum = parseInt(this.inputNum)
+                    this.upLoadTestNum[this.testType-1]= parseInt(this.inputNum)
                 }
             },
             submit(){
                 var self = this
+                var userId
+                if (document.cookie.indexOf('userId') > -1) {
+                    var cookieArr = document.cookie.split(';')
+                    for (var i = 0; i < cookieArr.length; i++) {
+                        var arr = cookieArr[i].split('=')
+                        if (arr[0].indexOf('userId') > -1) {
+                            userId = arr[1]
+                        }
+                    }
+                }
                 var chooseTestOption = new Array()
                 if(this.testType == '1'){
-                    for(let i = 0;i<this.upLoadTestNum;i++){
+                    for(let i = 0;i<this.upLoadTestNum[0];i++){
                         var tempArr = []
                         for(let j = 0;j<4;j++){
                             var optionValue = $("[optionIndex="+i+'-'+j+"]").find('input').val()
@@ -113,7 +123,7 @@
                     }
                 }
                 this.chooseTestOption = chooseTestOption
-
+                console.log(chooseTestOption)
                 var chooseTest = {
                     type:'chooseTest',
                     chooseTestQuestion:this.chooseTestQuestion,
@@ -138,7 +148,7 @@
                     qaTestOption:this.qaTestOption,
                     qaTestAnswer:this.qaTestAnswer
                 }
-
+                console.log(chooseTest)
                 var requestData = {
                     ownerName:this.ownerName,
                     testDate:[this.formatDate(this.testDate[0]),this.formatDate(this.testDate[1])],
@@ -146,12 +156,13 @@
                     blankTest: blankTest,
                     oxTest: oxTest,
                     qaTest: qaTest,
+                    userId: userId
                 }
                 if(this.ownerName==''){
                     this.open4('请填写出卷人')
                 }else if(requestData.testDate.length!=2){
                     this.open4('请选择测试的日期')
-                }else if(requestData.chooseTest.length!=0|| requestData.blankTest.length != 0|| requestData.oxTest.length != 0|| requestData.qaTest.length != 0){
+                }else if(requestData.chooseTest.length==0 && requestData.blankTest.length == 0 && requestData.oxTest.length == 0 && requestData.qaTest.length == 0){
                     this.open4('请至少编写一道题目')
                 }else{
                     $.ajax({

@@ -2,34 +2,17 @@
     <div id="upLoadTest">
         <v-header></v-header>
         <div class="content-r pr">
-            <!-- <ul class="testList" v-show="!detailIsShow">
-                <li class="test-item" v-for="(item,index) in myTestList"  @click="showTestDetail(item._id)">
-                    <el-card class="box-card">
-                        <div slot="header" class="clearfix">
-                            <span>试卷{{index+1}}</span>                        
-                        </div>
-                        <div  class="">
-                            <div>
-                                时间: {{item.testDate[0]}} 到 {{item.testDate[1]}}
-                            </div>
-                            <div>
-                                出卷人: {{item.ownerName}}
-                            </div>
-                        </div>
-                    </el-card>
-                </li>
-            </ul> -->
             <div class="test-cont" v-if="detailIsShow">
                 <el-collapse v-model="activeNames" >
                     <el-collapse-item title="选择题" name="1">
                         <div class="choose-group input-group" v-for="(item,index) in chooseTest">
                             <span>{{index+1}}.</span>
-                            <el-input placeholder="请输入题目题干" style="width:60%;" v-model="chooseTestQuestion[index]"></el-input>
+                            <el-input placeholder="请输入题目题干" style="width:60%;" v-model="item.chooseTestQuestion"></el-input>
                             <div>
-                                <el-input v-for="(n,optionIndex) in 4" :placeholder="'选项'+n" style="width:20%" :optionIndex="index+'-'+optionIndex"></el-input>
+                                <el-input v-for="(n,optionIndex) in item.chooseTestOption" v-model="chooseTest[index].chooseTestOption[optionIndex]" style="width:20%" :optionIndex="index+'-'+optionIndex"></el-input>
                             </div>
                             <div class="answer">
-                                <el-input placeholder="请输入题目答案" style="width:50%;" v-model="chooseTestAnswer[index]"></el-input>
+                                <el-input placeholder="请输入题目答案" style="width:50%;" v-model="item.chooseTestAnswer"></el-input>
                             </div>
                         </div>
                     </el-collapse-item>
@@ -136,6 +119,7 @@
             },
             submit() {
                 var self = this
+
                 var requestData = {
                     chooseTest:this.chooseTest,
                     blankTest:this.blankTest,

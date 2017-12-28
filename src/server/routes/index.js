@@ -51,8 +51,8 @@ router.post('/login', function (req, res, next) {
         msg:'账号或密码错误'
       })
     }else{
-      res.cookie('userId', userId, { maxAge:  1000 * 60})
-
+      res.cookie('userId', userId, { maxAge:  1000 * 60 *10})
+      res.cookie('userType',doc[0].userType,{maxAge:1000*60 *10})
       res.json({
         status:'0000',
         msg:'登录成功',
@@ -86,7 +86,8 @@ router.post('/register',function(req,res,next){
     }else{
       user.create({
         id:userId,
-        password:userPwd
+        password:userPwd,
+        date:Date.now()
       },function(err,doc){
         if(err){
           console.log(err)
@@ -107,7 +108,47 @@ router.post('/logout',function(req,res,next){
     msg:'清除成功'
   })
 })
-
+router.post('/api/getUserList',function(req,res,next){
+  var users = db.users
+  users.find({userType:{$in:['1','2']}},{id:1,userType:1},function(err,doc){
+    if(err){
+      return res.json({
+        msg:'系统异常',
+        status:'9999'
+      })
+    }else{
+      return res.json({
+        status:'0000',
+        msg:'查询成功',
+        data:doc
+      })
+    }
+  })
+})
+router.post('/api/setUserList',function(req,res,next){
+  var users = db.users
+  var usersList = JSON.parse(req.body.data)
+  var promiseList = new Array()
+  for (let i = 0; i < usersList.length; i++) {
+    var p = new Promise(function (resolve, reject) {
+      users.update({ "_id": mongoose.mongo.ObjectId(usersList[i]._id) },{userType:usersList[i].userType}, function (error, document) {
+        if (error) {
+          console.log(error)
+        } else {
+          // console.log(document)
+          resolve()
+        }
+      })
+    })
+    promiseList.push(p)
+  }
+  Promise.all(promiseList).then(function () {
+    return res.json({
+      status: '0000',
+      msg: '操作成功',
+    })
+  })
+})
 router.post('/api/updateTest',function(req,res,next){
   var testDetail = JSON.parse(req.body.data)
   db.testList.update({ "_id": mongoose.mongo.ObjectId(testDetail.testId)},{
@@ -291,50 +332,51 @@ router.post('/api/getjudgeDetail',function(req,res,next){
 })
 
 router.post('/api/getMyTest',function(req,res,next){
-  if(!req.cookies.userId){
-    return res.json({
-      status:'1111',
-      msg:'未登录'
-    })
-  }
-  var ownerName = req.cookies.userId
-  var usersAnswer = db.usersAnswer
-  var testList = db.testList
-  var myTestList = new Array()
-  usersAnswer.find({ownerName:ownerName},function(err,doc){
-    if(err){
-      return res.json({
-        status:'9999',
-        msg:'系统异常'
-      })
-    }else{
-      var promiseList = new Array()
-      for (let i = 0; i < doc.length; i++) {
-        var p = new Promise(function(resolve,reject){
-          testList.find({ "_id": mongoose.mongo.ObjectId(doc[i].for) }, function (error, document) {
-            if (error) {
-              console.log(error)
-            } else {
-              // console.log(document)
-              myTestList.push({
-                testQuestion: document[0],
-                testAnswer: doc[i]
-              })
-              resolve()
-            }
+  if(req.body.userId){
+    var ownerName = req.body.userId
+    var usersAnswer = db.usersAnswer
+    var testList = db.testList
+    var myTestList = new Array()
+    usersAnswer.find({ ownerName: ownerName }, function (err, doc) {
+      if (err) {
+        return res.json({
+          status: '9999',
+          msg: '系统异常'
+        })
+      } else {
+        var promiseList = new Array()
+        for (let i = 0; i < doc.length; i++) {
+          var p = new Promise(function (resolve, reject) {
+            testList.find({ "_id": mongoose.mongo.ObjectId(doc[i].for) }, function (error, document) {
+              if (error) {
+                console.log(error)
+              } else {
+                // console.log(document)
+                myTestList.push({
+                  testQuestion: document[0],
+                  testAnswer: doc[i]
+                })
+                resolve()
+              }
+            })
+          })
+          promiseList.push(p)
+        }
+        Promise.all(promiseList).then(function () {
+          return res.json({
+            status: '0000',
+            msg: '操作成功',
+            data: myTestList
           })
         })
-        promiseList.push(p)
       }
-      Promise.all(promiseList).then(function(){
-        return res.json({
-          status: '0000',
-          msg: '操作成功',
-          data: myTestList
-        })
-      })
-    }
-  })
+    })
+  }else{
+    return res.json({
+      status: '1111',
+      msg: '未登录'
+    })
+  }
 })
 
 router.post('/api/upLoadAnswer',function(req,res,next){
@@ -400,8 +442,8 @@ router.post('/api/getTestDetail', function (req, res, next) {
 })
 router.post('/api/uploadTest',function(req,res,next){
   var users = db.users
-  var userId = req.cookies.userId
   var testData = JSON.parse(req.body.data)
+  var userId = testData.userId
   var chooseTest = new Array()
   var blankTest = new Array()
   var oxTest = new Array()

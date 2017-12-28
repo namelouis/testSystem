@@ -18,37 +18,71 @@
                 selectList:[
                 {title:'学生入口',content:'查看我的试卷'},
                 {title:'学生入口',content:'进行测试'},
-                {title:'学生入口',content:'内容'},
+                {title:'管理员入口',content:'修改用户权限'},
                 {title:'教师入口',content:'编写试题'},
                 {title:'教师入口',content:'修改试题'},
                 {title:'教师入口',content:'试题评分'},
                 ],
+                userType:''
             }
         },
         components:{
             'v-header':vheader
         },
+        mounted(){
+            var cookieArr = document.cookie.split(';')
+            for (var i = 0; i < cookieArr.length; i++) {
+                var arr = cookieArr[i].split('=')
+                if (arr[0].indexOf('userType') > -1) {
+                    this.userType = arr[1]
+                }
+            }
+
+        },
         methods:{
             routePush(index){
                 switch (index) {
                     case 0:
-                        this.$router.push('/myTest')
+                        if(this.userType=='2'){
+                            this.$router.push('/myTest')
+                        }else{
+                            alert('您没有权限')
+                        }
                         break;
                     case 1:
-                        this.$router.push('/selectTest')
+                        if (this.userType == '2') {
+                            this.$router.push('/selectTest')
+                        } else {
+                            alert('您没有权限')
+                        }
                         break;
                     case 2:
-                        this.$router.push('/selectTest')
+                        if (this.userType == '0') {
+                            this.$router.push('/setUser')
+                        } else {
+                            alert('您没有权限')
+                        }
                         break;
                     case 3:
-                        this.$router.push('/upLoadTest')
+                        if (this.userType == '1') {
+                            this.$router.push('/upLoadTest')
+                        } else {
+                            alert('您没有权限')
+                        }
                         break;
                     case 4:
-                        this.$router.push('/selectTest')
+                        if (this.userType == '1') {
+                            this.$router.push('/selectTest')
+                        } else {
+                            alert('您没有权限')
+                        }
                         break;
                     case 5:
-                        this.$router.push('/selectTest')
-                        break;                                        
+                        if (this.userType == '1') {
+                            this.$router.push('/selectTest')
+                        } else {
+                            alert('您没有权限')
+                        }                                                            
                     default:
                         break;
                 }

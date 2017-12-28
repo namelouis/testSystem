@@ -81,7 +81,12 @@
             },
             login(){
                 var self = this
+                
                if(this.type=='1'){
+                 if(self.loginId==''||self.loginPwd==''){
+                     alert('请输入用户名和密码')
+                     return
+                 }  
                  $.ajax({
                        url: 'http://localhost:3000/login',
                        data:{
@@ -115,7 +120,7 @@
                         },
                         type: 'post',
                         success: function (res) {
-                            console.log(res)
+                            alert(res.msg)
                         }
                     })
                 }else{

@@ -16,7 +16,8 @@ db.connection.on('open',function () {
 var users = mongoose.model('users',{
     id:String,
     password:String,
-    date:Date
+    date:Date,
+    userType: { type: String, default: '2' },              //0管理员,1教师,2学生
 })
 var chooseTest = mongoose.model('chooseTest', {
     chooseTestQuestion: String,

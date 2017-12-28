@@ -16,10 +16,10 @@
                         </div>
                     </div>
                     <div class="menu-group">
-                        <el-button type="primary" @click="toDoTest(item._id)">测试</el-button>
-                        <el-button type="info" @click=toUpdateTest(item._id)>修改</el-button>
-                        <el-button type="info" @click=tojudgeTestList(item._id)>批改</el-button>
-                        <el-button type="danger">删除</el-button>
+                        <el-button type="primary" @click="toDoTest(item._id)" v-if="userType=='2'">测试</el-button>
+                        <el-button type="info" @click=toUpdateTest(item._id) v-if="userType=='1'">修改</el-button>
+                        <el-button type="info" @click=tojudgeTestList(item._id) v-if="userType=='1'">批改</el-button>
+                        <!-- <el-button type="danger">删除</el-button> -->
                     </div>
                 </el-card>
             </li>
@@ -33,11 +33,19 @@
             return {
                 testList:[
                     
-                ]
+                ],
+                userType:'',
             }
         },
         mounted(){
             var self = this
+            var cookieArr = document.cookie.split(';')
+            for (var i = 0; i < cookieArr.length; i++) {
+                var arr = cookieArr[i].split('=')
+                if (arr[0].indexOf('userType') > -1) {
+                    this.userType = arr[1]
+                }
+            }
             $.ajax({
                 url: 'http://localhost:3000/api/getTestList',
                 type: 'post',

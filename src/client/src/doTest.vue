@@ -81,15 +81,21 @@
             },
             upLoadAnswer(){
                 var self = this
-                if(document.cookie.userId){
-                    console.log(document.cookie.userId)
+                var userId
+                var cookieArr = document.cookie.split(';')
+                for (var i = 0; i < cookieArr.length; i++) {
+                    var arr = cookieArr[i].split('=')
+                    if (arr[0].indexOf('userId') > -1) {
+                        userId = arr[1]
+                    }
                 }
                 var answerData = {
                     userChooseTestAnswer:this.userChooseTestAnswer,
                     userBlankTestAnswer:this.userBlankTestAnswer,
                     userOxTestAnswer:this.userOxTestAnswer,
                     userQaTestAnswer:this.userQaTestAnswer,
-                    for:this.data[0]._id
+                    for:this.data[0]._id,
+                    ownerName:userId,
                 }
                 $.ajax({
                     url:'http://localhost:3000/api/upLoadAnswer',
