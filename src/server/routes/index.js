@@ -103,7 +103,8 @@ router.post('/register',function(req,res,next){
 })
 
 router.post('/logout',function(req,res,next){
-  res.cookie('userId','null',{maxAge:0})
+  res.clearCookie("userId","", { expires:new Date(0)})
+  res.clearCookie("userType","", { expires: new Date(0)})
   return res.json({
     msg:'清除成功'
   })
@@ -336,6 +337,7 @@ router.post('/api/getMyTest',function(req,res,next){
     var ownerName = req.body.userId
     var usersAnswer = db.usersAnswer
     var testList = db.testList
+    var grade = db.grade
     var myTestList = new Array()
     usersAnswer.find({ ownerName: ownerName }, function (err, doc) {
       if (err) {
@@ -352,11 +354,14 @@ router.post('/api/getMyTest',function(req,res,next){
                 console.log(error)
               } else {
                 // console.log(document)
-                myTestList.push({
-                  testQuestion: document[0],
-                  testAnswer: doc[i]
-                })
-                resolve()
+                grade.find({"for":doc[i]._id},function(e,d){
+                  myTestList.push({
+                    testQuestion: document[0],
+                    testAnswer: doc[i],
+                    grade:d[0]
+                  })
+                  resolve()
+                })  
               }
             })
           })

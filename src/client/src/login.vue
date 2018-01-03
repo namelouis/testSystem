@@ -65,12 +65,16 @@
         },
         created(){
             if(document.cookie.indexOf('userId')>-1){
-                this.isLogin = true
                 var cookieArr = document.cookie.split(';')
                 for (var i = 0;i<cookieArr.length;i++){
                     var arr = cookieArr[i].split('=')
                     if(arr[0].indexOf('userId')>-1){
                         this.userId = arr[1]
+                    }
+                    if(this.userId != ''){
+                        this.isLogin = true
+                    }else{
+                        this.isLogin = false
                     }
                 }
             }
@@ -134,7 +138,7 @@
                     url:'http://localhost:3000/logout',
                     type:'post',
                     success:function(){
-
+                        window.location.reload()
                     }
                 })
             }

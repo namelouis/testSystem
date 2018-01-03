@@ -34,10 +34,14 @@
                                 <div class="chooseTest-item" v-for="(item,index) in testDetail.chooseTest">
                                     <p class="test-title">{{index+1}} .{{item.chooseTestQuestion}}</p>
                                     <div class="choose-option-con" v-for="(option,key) in item.chooseTestOption">
-                                        <p class="option-title">{{option}}</p>
+                                        <p class="option-title">{{option}} </p>
                                     </div>
-                                    <p>你的答案:</p>
-
+                                    <p>你的答案: {{item.chooseTestUserAnswer}}</p>
+                                    <p>
+                                        <i class="el-icon-check" v-if="item.chooseTestGrades.isTrue=='1'"></i>
+                                        <i class="el-icon-close" v-else></i>
+                                    </p>
+                                    <p v-if="item.chooseTestGrades.chooseTestAnswer">正确答案: {{item.chooseTestGrades.chooseTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -45,8 +49,12 @@
                             <div class="blankTest-con">
                                 <div class="blankTest-item" v-for="(item,index) in testDetail.blankTest">
                                     <p class="test-title">{{index+1}} .{{item.blankTestQuestion}}</p>
-                                    <p>你的答案:</p>
-                                    <p>{{item.blankTestUserAnswer}}</p>
+                                    <p>你的答案: {{item.blankTestUserAnswer}}</p>
+                                    <p>
+                                        <i class="el-icon-check" v-if="item.blankTestGrades.isTrue=='1'"></i>
+                                        <i class="el-icon-close" v-else></i>
+                                    </p>
+                                    <p v-if="item.blankTestGrades.blankTestAnswer">正确答案: {{item.blankTestGrades.blankTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -54,8 +62,12 @@
                             <div class="oxTest-con">
                                 <div class="oxTest-item" v-for="(item,index) in testDetail.oxTest">
                                     <p class="test-title">{{index+1}} .{{item.oxTestQuestion}}</p>
-                                    <p>你的答案:</p>
-                                    <p>{{item.oxTestUserAnswer=='0'?'错误':'正确'}}</p>
+                                    <p>你的答案: {{item.oxTestUserAnswer=='0'?'错误':'正确'}}</p>
+                                    <p>
+                                        <i class="el-icon-check" v-if="item.oxTestGrades.isTrue=='1'"></i>
+                                        <i class="el-icon-close" v-else></i>
+                                    </p>
+                                    <p v-if="item.oxTestGrades.oxTestAnswer">正确答案: {{item.oxTestGrades.oxTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -63,8 +75,11 @@
                             <div class="qaTest-con">
                                 <div class="qaTest-item" v-for="(item,index) in testDetail.qaTest">
                                     <p class="test-title">{{index+1}} . {{item.qaTestQuestion}}</p>
-                                    <p>你的答案:</p>
-                                    <p>{{item.qaTestUserAnswer}}</p>
+                                    <p>你的答案: {{item.qaTestUserAnswer}}</p>
+                                    <p>
+                                        分数:  {{item.qaTestGrades.rate}}
+                                    </p>
+                                    <p v-if="item.qaTestGrades.qaTestAnswer">正确答案: {{item.qaTestGrades.qaTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -118,28 +133,32 @@
                             var obj = {
                                 chooseTestQuestion: res.data[i].testQuestion.chooseTest[j].chooseTestQuestion,
                                 chooseTestOption: res.data[i].testQuestion.chooseTest[j].chooseTestOption,
-                                chooseTestUserAnswer: res.data[i].testAnswer.chooseTest[j]
+                                chooseTestUserAnswer: res.data[i].testAnswer.chooseTest[j],
+                                chooseTestGrades:res.data[i].grade.chooseTest[j]
                             }
                             chooseTest.push(obj)
                         }
                         for (let j = 0; j < res.data[i].testQuestion.blankTest.length; j++) {
                             var obj = {
                                 blankTestQuestion: res.data[i].testQuestion.blankTest[j].blankTestQuestion,
-                                blankTestUserAnswer: res.data[i].testAnswer.blankTest[j]
+                                blankTestUserAnswer: res.data[i].testAnswer.blankTest[j],
+                                blankTestGrades:res.data[i].grade.blankTest[j]
                             }
                             blankTest.push(obj)
                         }
                         for (let j = 0; j < res.data[i].testQuestion.oxTest.length; j++) {
                             var obj = {
                                 oxTestQuestion: res.data[i].testQuestion.oxTest[j].oxTestQuestion,
-                                oxTestUserAnswer: res.data[i].testAnswer.oxTest[j]
+                                oxTestUserAnswer: res.data[i].testAnswer.oxTest[j],
+                                oxTestGrades:res.data[i].grade.oxTest[j]
                             }
                             oxTest.push(obj)
                         }
                         for (let j = 0; j < res.data[i].testQuestion.qaTest.length; j++) {
                             var obj = {
                                 qaTestQuestion: res.data[i].testQuestion.qaTest[j].qaTestQuestion,
-                                qaTestUserAnswer: res.data[i].testAnswer.qaTest[j]
+                                qaTestUserAnswer: res.data[i].testAnswer.qaTest[j],
+                                qaTestGrades: res.data[i].grade.qaTest[j]
                             }
                             qaTest.push(obj)
                         }
