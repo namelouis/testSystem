@@ -51,8 +51,8 @@ router.post('/login', function (req, res, next) {
         msg:'账号或密码错误'
       })
     }else{
-      res.cookie('userId', userId, { maxAge:  1000 * 60 *10})
-      res.cookie('userType',doc[0].userType,{maxAge:1000*60 *10})
+      res.cookie('userId', userId, { maxAge:  1000 * 60 * 60 })
+      res.cookie('userType',doc[0].userType,{maxAge:1000*60 *60})
       res.json({
         status:'0000',
         msg:'登录成功',

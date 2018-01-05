@@ -123,64 +123,67 @@
                     userId: userId
                 },
                 success:function(res){
-                    var testList = new Array()
-                    for(let i=0;i<res.data.length;i++){
-                        var chooseTest = new Array()
-                        var blankTest = new Array()
-                        var oxTest = new Array()
-                        var qaTest = new Array()
-                        for(let j=0;j<res.data[i].testQuestion.chooseTest.length;j++){
-                            var obj = {
-                                chooseTestQuestion: res.data[i].testQuestion.chooseTest[j].chooseTestQuestion,
-                                chooseTestOption: res.data[i].testQuestion.chooseTest[j].chooseTestOption,
-                                chooseTestUserAnswer: res.data[i].testAnswer.chooseTest[j],
-                                chooseTestGrades:res.data[i].grade.chooseTest[j]
+                    if(res.data.length>0){
+                        var testList = new Array()
+                        for (let i = 0; i < res.data.length; i++) {
+                            var chooseTest = new Array()
+                            var blankTest = new Array()
+                            var oxTest = new Array()
+                            var qaTest = new Array()
+                            for (let j = 0; j < res.data[i].testQuestion.chooseTest.length; j++) {
+                                var obj = {
+                                    chooseTestQuestion: res.data[i].testQuestion.chooseTest[j].chooseTestQuestion,
+                                    chooseTestOption: res.data[i].testQuestion.chooseTest[j].chooseTestOption,
+                                    chooseTestUserAnswer: res.data[i].testAnswer.chooseTest[j],
+                                    chooseTestGrades: res.data[i].grade.chooseTest[j]
+                                }
+                                chooseTest.push(obj)
                             }
-                            chooseTest.push(obj)
-                        }
-                        for (let j = 0; j < res.data[i].testQuestion.blankTest.length; j++) {
-                            var obj = {
-                                blankTestQuestion: res.data[i].testQuestion.blankTest[j].blankTestQuestion,
-                                blankTestUserAnswer: res.data[i].testAnswer.blankTest[j],
-                                blankTestGrades:res.data[i].grade.blankTest[j]
+                            for (let j = 0; j < res.data[i].testQuestion.blankTest.length; j++) {
+                                var obj = {
+                                    blankTestQuestion: res.data[i].testQuestion.blankTest[j].blankTestQuestion,
+                                    blankTestUserAnswer: res.data[i].testAnswer.blankTest[j],
+                                    blankTestGrades: res.data[i].grade.blankTest[j]
+                                }
+                                blankTest.push(obj)
                             }
-                            blankTest.push(obj)
-                        }
-                        for (let j = 0; j < res.data[i].testQuestion.oxTest.length; j++) {
-                            var obj = {
-                                oxTestQuestion: res.data[i].testQuestion.oxTest[j].oxTestQuestion,
-                                oxTestUserAnswer: res.data[i].testAnswer.oxTest[j],
-                                oxTestGrades:res.data[i].grade.oxTest[j]
+                            for (let j = 0; j < res.data[i].testQuestion.oxTest.length; j++) {
+                                var obj = {
+                                    oxTestQuestion: res.data[i].testQuestion.oxTest[j].oxTestQuestion,
+                                    oxTestUserAnswer: res.data[i].testAnswer.oxTest[j],
+                                    oxTestGrades: res.data[i].grade.oxTest[j]
+                                }
+                                oxTest.push(obj)
                             }
-                            oxTest.push(obj)
-                        }
-                        for (let j = 0; j < res.data[i].testQuestion.qaTest.length; j++) {
-                            var obj = {
-                                qaTestQuestion: res.data[i].testQuestion.qaTest[j].qaTestQuestion,
-                                qaTestUserAnswer: res.data[i].testAnswer.qaTest[j],
-                                qaTestGrades: res.data[i].grade.qaTest[j]
+                            for (let j = 0; j < res.data[i].testQuestion.qaTest.length; j++) {
+                                var obj = {
+                                    qaTestQuestion: res.data[i].testQuestion.qaTest[j].qaTestQuestion,
+                                    qaTestUserAnswer: res.data[i].testAnswer.qaTest[j],
+                                    qaTestGrades: res.data[i].grade.qaTest[j]
+                                }
+                                qaTest.push(obj)
                             }
-                            qaTest.push(obj)
+
+                            var object = {
+                                questionOwner: res.data[i].testQuestion.ownerName,
+                                answerOwner: res.data[i].testAnswer.ownerName,
+                                questionDate: res.data[i].testQuestion.testDate,
+                                answerDate: res.data[i].testAnswer.answerDate,
+                                chooseTest: chooseTest,
+                                blankTest: blankTest,
+                                oxTest: oxTest,
+                                qaTest: qaTest,
+                                isJudge: res.data[i].testAnswer.isJudge
+                            }
+                            self.myTestList.push(object)
                         }
 
-                        var object = {
-                            questionOwner:res.data[i].testQuestion.ownerName,
-                            answerOwner:res.data[i].testAnswer.ownerName,
-                            questionDate:res.data[i].testQuestion.testDate,
-                            answerDate: res.data[i].testAnswer.answerDate,
-                            chooseTest:chooseTest,
-                            blankTest:blankTest,
-                            oxTest:oxTest,
-                            qaTest:qaTest,
-                            isJudge:res.data[i].testAnswer.isJudge
-                        }
-                        self.myTestList.push(object)
+                        // self.myTestList = testList
+                        self.testDetail = self.myTestList[0]
+                    } else { 
+                        alert('您没有作答试题')
                     }
-
-                    // self.myTestList = testList
-                    self.testDetail = self.myTestList[0]
                 }
-
             })
         },
         components:{
