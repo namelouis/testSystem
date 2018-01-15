@@ -68,6 +68,7 @@
                 data:{
                     testId:testId
                 },
+                // async:true,
                 success:function(res){
                     self.loading = false   
                     self.data = res.data

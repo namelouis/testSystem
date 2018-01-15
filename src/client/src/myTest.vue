@@ -34,14 +34,14 @@
                                 <div class="chooseTest-item" v-for="(item,index) in testDetail.chooseTest">
                                     <p class="test-title">{{index+1}} .{{item.chooseTestQuestion}}</p>
                                     <div class="choose-option-con" v-for="(option,key) in item.chooseTestOption">
-                                        <p class="option-title">{{option}} </p>
+                                        <p class="option-title">选项{{changeNtoS(key+1)}} : {{option}} </p>
                                     </div>
-                                    <p>你的答案: {{item.chooseTestUserAnswer}}</p>
-                                    <p>
-                                        <i class="el-icon-check" v-if="item.chooseTestGrades.isTrue=='1'"></i>
+                                    <p>你的答案: {{changeNtoS(item.chooseTestUserAnswer)}}</p>
+                                    <p v-if="item.chooseGrade">
+                                        <i class="el-icon-check" v-if="item.chooseGrade && item.chooseTestGrades.isTrue=='1'"></i>
                                         <i class="el-icon-close" v-else></i>
                                     </p>
-                                    <p v-if="item.chooseTestGrades.chooseTestAnswer">正确答案: {{item.chooseTestGrades.chooseTestAnswer}}</p>
+                                    <p v-if="item.chooseTestGrades && item.chooseTestGrades.chooseTestAnswer">正确答案: {{item.chooseTestGrades.chooseTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -50,11 +50,11 @@
                                 <div class="blankTest-item" v-for="(item,index) in testDetail.blankTest">
                                     <p class="test-title">{{index+1}} .{{item.blankTestQuestion}}</p>
                                     <p>你的答案: {{item.blankTestUserAnswer}}</p>
-                                    <p>
-                                        <i class="el-icon-check" v-if="item.blankTestGrades.isTrue=='1'"></i>
+                                    <p v-if="item.blankGrade">
+                                        <i class="el-icon-check" v-if="item.blankGrade && item.blankTestGrades.isTrue=='1'"></i>
                                         <i class="el-icon-close" v-else></i>
                                     </p>
-                                    <p v-if="item.blankTestGrades.blankTestAnswer">正确答案: {{item.blankTestGrades.blankTestAnswer}}</p>
+                                    <p v-if="item.blankTestGrades && item.blankTestGrades.blankTestAnswer">正确答案: {{item.blankTestGrades.blankTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -63,11 +63,11 @@
                                 <div class="oxTest-item" v-for="(item,index) in testDetail.oxTest">
                                     <p class="test-title">{{index+1}} .{{item.oxTestQuestion}}</p>
                                     <p>你的答案: {{item.oxTestUserAnswer=='0'?'错误':'正确'}}</p>
-                                    <p>
-                                        <i class="el-icon-check" v-if="item.oxTestGrades.isTrue=='1'"></i>
+                                    <p v-if="item.oxGrade">
+                                        <i class="el-icon-check" v-if="item.oxGrade && item.oxTestGrades.isTrue=='1'"></i>
                                         <i class="el-icon-close" v-else></i>
                                     </p>
-                                    <p v-if="item.oxTestGrades.oxTestAnswer">正确答案: {{item.oxTestGrades.oxTestAnswer}}</p>
+                                    <p v-if="item.oxTestGrades && item.oxTestGrades.oxTestAnswer">正确答案: {{item.oxTestGrades.oxTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -76,10 +76,10 @@
                                 <div class="qaTest-item" v-for="(item,index) in testDetail.qaTest">
                                     <p class="test-title">{{index+1}} . {{item.qaTestQuestion}}</p>
                                     <p>你的答案: {{item.qaTestUserAnswer}}</p>
-                                    <p>
+                                    <p v-if="item.qaTestGrades">
                                         分数:  {{item.qaTestGrades.rate}}
                                     </p>
-                                    <p v-if="item.qaTestGrades.qaTestAnswer">正确答案: {{item.qaTestGrades.qaTestAnswer}}</p>
+                                    <p v-if="item.qaTestGrades && item.qaTestGrades.qaTestAnswer">正确答案: {{item.qaTestGrades.qaTestAnswer}}</p>
                                 </div>
                             </div>
                         </el-collapse-item>
@@ -131,35 +131,56 @@
                             var oxTest = new Array()
                             var qaTest = new Array()
                             for (let j = 0; j < res.data[i].testQuestion.chooseTest.length; j++) {
+                                if(res.data[i].testAnswer.isJudge==true){
+                                    var chooseGrade = res.data[i].grade.chooseTest[j] 
+                                }else{
+                                    var chooseGrade = null
+                                }
+                                
                                 var obj = {
                                     chooseTestQuestion: res.data[i].testQuestion.chooseTest[j].chooseTestQuestion,
                                     chooseTestOption: res.data[i].testQuestion.chooseTest[j].chooseTestOption,
                                     chooseTestUserAnswer: res.data[i].testAnswer.chooseTest[j],
-                                    chooseTestGrades: res.data[i].grade.chooseTest[j]
+                                    chooseTestGrades: chooseGrade
                                 }
                                 chooseTest.push(obj)
                             }
                             for (let j = 0; j < res.data[i].testQuestion.blankTest.length; j++) {
+                                if (res.data[i].testAnswer.isJudge == true) {
+                                    var blankGrade = res.data[i].grade.blankTest[j]
+                                } else {
+                                    var blankGrade = null
+                                }
                                 var obj = {
                                     blankTestQuestion: res.data[i].testQuestion.blankTest[j].blankTestQuestion,
                                     blankTestUserAnswer: res.data[i].testAnswer.blankTest[j],
-                                    blankTestGrades: res.data[i].grade.blankTest[j]
+                                    blankTestGrades: blankGrade 
                                 }
                                 blankTest.push(obj)
                             }
                             for (let j = 0; j < res.data[i].testQuestion.oxTest.length; j++) {
+                                if (res.data[i].testAnswer.isJudge == true) {
+                                    var oxGrade = res.data[i].grade.oxTest[j]
+                                } else {
+                                    var oxGrade = null
+                                }
                                 var obj = {
                                     oxTestQuestion: res.data[i].testQuestion.oxTest[j].oxTestQuestion,
                                     oxTestUserAnswer: res.data[i].testAnswer.oxTest[j],
-                                    oxTestGrades: res.data[i].grade.oxTest[j]
+                                    oxTestGrades: oxGrade
                                 }
                                 oxTest.push(obj)
                             }
                             for (let j = 0; j < res.data[i].testQuestion.qaTest.length; j++) {
+                                if (res.data[i].testAnswer.isJudge == true) {
+                                    var qaGrade = res.data[i].grade.qaTest[j]
+                                } else {
+                                    var qaGrade = null
+                                }
                                 var obj = {
                                     qaTestQuestion: res.data[i].testQuestion.qaTest[j].qaTestQuestion,
                                     qaTestUserAnswer: res.data[i].testAnswer.qaTest[j],
-                                    qaTestGrades: res.data[i].grade.qaTest[j]
+                                    qaTestGrades: qaGrade
                                 }
                                 qaTest.push(obj)
                             }
@@ -197,6 +218,17 @@
             toggleDetailIsShow(){
                 this.detailIsShow = false
             },
+            changeNtoS(num){
+                if(num=='1'){
+                    return 'A'
+                }else if(num=='2'){
+                    return 'B'
+                } else if (num == '3') {
+                    return 'C'
+                } else if (num == '4') {
+                    return 'D'
+                }
+            }
         }
     }
 </script>

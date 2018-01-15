@@ -355,6 +355,11 @@ router.post('/api/getMyTest',function(req,res,next){
               } else {
                 // console.log(document)
                 grade.find({"for":doc[i]._id},function(e,d){
+                  var obj = {}
+                  if(d.length!=0){
+                    obj = d[0]
+                  }
+
                   myTestList.push({
                     testQuestion: document[0],
                     testAnswer: doc[i],
@@ -385,14 +390,15 @@ router.post('/api/getMyTest',function(req,res,next){
 })
 
 router.post('/api/upLoadAnswer',function(req,res,next){
-  var userId = req.cookies.userId
   var answer = JSON.parse(req.body.data)
+  var userId = answer.userId
+  console.log(answer)
   var userAnswer = new db.usersAnswer({
     chooseTest: answer.userChooseTestAnswer,
     blankTest: answer.userBlankTestAnswer,
     oxTest: answer.userOxTestAnswer,
     qaTest: answer.userQaTestAnswer,
-    ownerName: userId,
+    ownerName: answer.ownerName,
     answerDate: Date.now(),
     for:answer.for
   })
